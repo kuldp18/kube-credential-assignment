@@ -31,7 +31,6 @@ const VerifyPage = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            autoFocus
             className="w-full px-4 py-3 bg-neutral-800 border-2 border-neutral-600 rounded-md text-neutral-200 placeholder-neutral-500 outline-none focus:ring-2 focus:ring-stone-500 focus:border-stone-500 transition-all duration-200"
           />
 
