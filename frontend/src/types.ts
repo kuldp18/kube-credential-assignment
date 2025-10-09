@@ -13,8 +13,3 @@ export type VerifiedCredential = {
   worker: string;
   issuedAt: string;
 };
-
-export type ResponseMessage = {
-  error: boolean;
-  text: string;
-};
