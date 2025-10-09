@@ -109,9 +109,9 @@ const GeneratePage = () => {
             ) : (
               <button
                 onClick={handleCloseModal}
-                className="w-full py-3 px-4 bg-neutral-600 rounded-md font-semibold text-white hover:bg-neutral-500 transition-colors"
+                className="w-full py-3 px-4 bg-neutral-600 rounded-md font-semibold text-white hover:bg-neutral-500 transition-colors cursor-pointer"
               >
-                Close
+                Try Again
               </button>
             )
           }
