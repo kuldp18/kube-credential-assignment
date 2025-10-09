@@ -29,7 +29,7 @@ export async function checkCredential(
     }
 
     res.status(200).json({
-      message: "Credential found",
+      message: "Credential verified!",
       error: false,
       data: {
         credential: {
