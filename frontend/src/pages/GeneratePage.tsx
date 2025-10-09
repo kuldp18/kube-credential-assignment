@@ -18,6 +18,7 @@ const GeneratePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState<ModalData | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleGeneration = async () => {
     setIsLoading(true);
@@ -47,8 +48,18 @@ const GeneratePage = () => {
     }
   };
 
+  const handleCopyPassword = (password: string) => {
+    navigator.clipboard.writeText(password).then(() => {
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    });
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setIsCopied(false);
   };
 
   return (
@@ -119,8 +130,13 @@ const GeneratePage = () => {
                 <span className="font-semibold text-neutral-400">
                   Password:
                 </span>
-                <span className="font-mono bg-neutral-900 px-2 py-1 rounded text-white">
-                  {modalData.credential.password}
+                <span
+                  className="font-mono bg-neutral-900 px-2 py-1 rounded text-white cursor-pointer hover:outline-1 hover:outline-amber-50 w-36 text-center"
+                  onClick={() =>
+                    handleCopyPassword(modalData.credential!.password)
+                  }
+                >
+                  {isCopied ? "Copied!" : modalData.credential.password}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -131,6 +147,12 @@ const GeneratePage = () => {
                   {new Date(modalData.credential.issuedAt).toLocaleString(
                     "en-IN"
                   )}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-semibold text-neutral-400">Worker:</span>
+                <span className="text-white">
+                  {modalData.credential.issuedBy}
                 </span>
               </div>
             </div>
