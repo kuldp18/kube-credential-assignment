@@ -1,5 +1,3 @@
-import "@testing-library/jest-dom";
-
 import GeneratePage from "../GeneratePage";
 import { render, waitFor } from "@testing-library/react";
 import { screen } from "@testing-library/dom";
