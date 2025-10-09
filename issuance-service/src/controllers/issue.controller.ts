@@ -47,7 +47,7 @@ export async function fetchCredentials(
     });
 
     res.status(201).json({
-      message: "Credential created",
+      message: "Credential generated",
       error: false,
       data: {
         credential: {
