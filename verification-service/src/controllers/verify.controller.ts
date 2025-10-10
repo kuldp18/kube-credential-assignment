@@ -11,7 +11,7 @@ export async function verifyCredential(
 
   if (!username || !password) {
     return res.status(400).json({
-      message: "Please provide a username and password to proceed.",
+      message: "Please provide both username and password to proceed.",
       error: true,
     });
   }
