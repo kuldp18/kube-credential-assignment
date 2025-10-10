@@ -1,0 +1,25 @@
+# deps
+node_modules
+
+# output
+dist
+
+# secrets
+.env*
+.env.*.local
+
+# tests
+src/pages/__tests__
+src/setupTests.ts
+vitest.config.ts
+
+# os
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
