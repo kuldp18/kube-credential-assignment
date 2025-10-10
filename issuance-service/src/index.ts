@@ -1,17 +1,8 @@
-import express from "express";
+import app from "./app.js";
 import "dotenv/config";
 import { connectDB } from "./utils/connection.js";
-import issuanceRoutes from "./routes/issue.route.js";
-import internalRoutes from "./routes/internal.route.js";
 
-const app = express();
 const PORT = process.env.PORT || 5000;
-
-app.use(express.json());
-
-// routes
-app.use("/api/services/issuance", issuanceRoutes);
-app.use("/api/services/issuance/internal", internalRoutes);
 
 try {
   await connectDB();

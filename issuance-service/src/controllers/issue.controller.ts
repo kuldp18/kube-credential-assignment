@@ -5,7 +5,7 @@ import {
   checkExistingCredential,
   generateCredential,
 } from "../utils/credentials.js";
-import CredentialSchema from "../models/credential.schema.js";
+import CredentialSchema from "../models/credential.model.js";
 
 export async function fetchCredentials(
   req: Request,

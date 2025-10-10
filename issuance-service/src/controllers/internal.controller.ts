@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type { ResponseMessage } from "../types.js";
-import CredentialSchema from "../models/credential.schema.js";
+import CredentialSchema from "../models/credential.model.js";
 
 export async function checkCredential(
   req: Request,

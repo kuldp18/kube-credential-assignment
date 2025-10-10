@@ -1,4 +1,4 @@
-import CredentialSchema from "../models/credential.schema.js";
+import CredentialSchema from "../models/credential.model.js";
 import type { Credential } from "../types.ts";
 import crypto from "crypto";
 
