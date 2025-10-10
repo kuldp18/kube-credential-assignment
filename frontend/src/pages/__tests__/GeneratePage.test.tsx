@@ -27,7 +27,7 @@ describe("GeneratePage", () => {
     });
   });
 
-  it("should render the initial form on the page correctly with a disabled button", () => {
+  it("should render the initial form correctly on the page with a disabled button", () => {
     render(<GeneratePage />, { wrapper: BrowserRouter });
 
     expect(
@@ -39,7 +39,7 @@ describe("GeneratePage", () => {
     expect(screen.getByRole("button", { name: "Generate" })).toBeDisabled();
   });
 
-  it("should enable the Generate button when the user starts typing a username", async () => {
+  it("should enable the Generate button only when the user starts typing a username", async () => {
     const user = userEvent.setup();
     render(<GeneratePage />, { wrapper: BrowserRouter });
 
@@ -85,7 +85,7 @@ describe("GeneratePage", () => {
     ).toBeInTheDocument();
   });
 
-  it("should show an alternate message when a credential is already generated for a username", async () => {
+  it("should show an alternate modal when a credential is already generated for a username", async () => {
     const user = userEvent.setup();
     render(<GeneratePage />, { wrapper: BrowserRouter });
 
@@ -121,7 +121,7 @@ describe("GeneratePage", () => {
       screen.getByRole("link", { name: "Go to verification page" })
     ).toBeInTheDocument();
   });
-  it("should copy the password to clipboard on click and show 'Copied!' text", async () => {
+  it("should copy the password to clipboard on click and display 'Copied!' text for 2 seconds", async () => {
     const user = userEvent.setup();
     render(<GeneratePage />, { wrapper: BrowserRouter });
 
