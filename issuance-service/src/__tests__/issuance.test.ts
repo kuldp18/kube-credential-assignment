@@ -12,7 +12,7 @@ describe("Issuance Service", () => {
 
   describe("POST /issue", () => {
     describe("given a new username", () => {
-      it("should create a new credential and return 201 status code", async () => {
+      it("should create and return a new credential with 201 status code", async () => {
         (CredentialSchema.findOne as Mock).mockResolvedValue(null);
 
         const savedCredential = {
@@ -39,9 +39,63 @@ describe("Issuance Service", () => {
         expect(response.body.data.credential.password).toBe(
           savedCredential.password
         );
-        expect(response.body.data.credential.issuedBy).toBe(
-          `credential issued by ${savedCredential.worker}`
+        expect(response.body.data.credential.issuedBy).toContain(
+          savedCredential.worker
         );
+        expect(response.body.data.credential.issuedAt).toBe(
+          savedCredential.createdAt
+        );
+      });
+    });
+
+    describe("given the username already exists", () => {
+      it("should return the existing credential with 200 status code", async () => {
+        const savedCredential = {
+          _id: "123",
+          username: "test-user",
+          password: "test-password-123",
+          worker: "worker-test",
+          createdAt: new Date().toISOString(),
+        };
+
+        (CredentialSchema.findOne as Mock).mockResolvedValue(savedCredential);
+
+        const response = await request(app)
+          .post("/api/services/issuance/issue")
+          .send({
+            username: "test-user",
+          });
+
+        expect(response.status).toBe(200);
+        expect(response.body.error).toBe(false);
+        expect(response.body.message).toContain("already exists");
+        expect(response.body.data.credential.id).toBe(savedCredential._id);
+        expect(response.body.data.credential.username).toBe("test-user");
+        expect(response.body.data.credential.password).toBe(
+          savedCredential.password
+        );
+        expect(response.body.data.credential.issuedBy).toContain(
+          savedCredential.worker
+        );
+        expect(response.body.data.credential.issuedAt).toBe(
+          savedCredential.createdAt
+        );
+      });
+    });
+
+    describe("given the database fails", () => {
+      it("should return an error with 500 status code", async () => {
+        (CredentialSchema.findOne as Mock).mockRejectedValue(
+          new Error("Mock Database connection failed")
+        );
+
+        const response = await request(app)
+          .post("/api/services/issuance/issue")
+          .send({ username: "test-user" });
+
+        expect(response.status).toBe(500);
+        expect(response.body.error).toBe(true);
+        expect(response.body.message).toContain("Please try again.");
       });
     });
   });

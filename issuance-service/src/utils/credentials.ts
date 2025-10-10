@@ -13,15 +13,10 @@ export function generateCredential(username: string): Credential {
 export async function checkExistingCredential(
   username: string
 ): Promise<null | Credential> {
-  try {
-    const cred = await CredentialSchema.findOne({ username });
+  const cred = await CredentialSchema.findOne({ username });
 
-    if (cred) {
-      return cred;
-    }
-    return null;
-  } catch (error) {
-    console.error(`Error while checking existing credential in DB: ${error}`);
-    return null;
+  if (cred) {
+    return cred;
   }
+  return null;
 }

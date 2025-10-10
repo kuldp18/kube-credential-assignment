@@ -7,6 +7,8 @@ import {
 } from "../utils/credentials.js";
 import CredentialSchema from "../models/credential.model.js";
 
+import { type Document } from "mongoose";
+
 export async function fetchCredentials(
   req: Request,
   res: Response<ResponseMessage>
@@ -20,26 +22,29 @@ export async function fetchCredentials(
     });
   }
 
-  const existingCredential = await checkExistingCredential(username);
-
-  if (existingCredential) {
-    return res.status(200).json({
-      message: `Credential with username '${username}' already exists`,
-      error: false,
-      data: {
-        credential: {
-          username: existingCredential.username,
-          password: existingCredential.password,
-          issuedBy: `credential issued by ${existingCredential.worker}`,
-          issuedAt: existingCredential.createdAt,
-        },
-      },
-    });
-  }
-
-  const credentials = generateCredential(username);
-
   try {
+    const existingCredential = (await checkExistingCredential(
+      username
+    )) as Credential & Document;
+
+    if (existingCredential) {
+      return res.status(200).json({
+        message: `Credential with username '${username}' already exists`,
+        error: false,
+        data: {
+          credential: {
+            id: existingCredential._id,
+            username: existingCredential.username,
+            password: existingCredential.password,
+            issuedBy: `credential issued by ${existingCredential.worker}`,
+            issuedAt: existingCredential.createdAt,
+          },
+        },
+      });
+    }
+
+    const credentials = generateCredential(username);
+
     const savedCredentials = await CredentialSchema.create<Credential>({
       username: credentials.username,
       password: credentials.password,
