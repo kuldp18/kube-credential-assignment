@@ -10,7 +10,7 @@ describe("Issuance Service", () => {
     vi.clearAllMocks();
   });
 
-  describe("POST /issue", () => {
+  describe("POST /services/issuance/issue", () => {
     describe("given a new username", () => {
       it("should create and return a new credential with 201 status code", async () => {
         (CredentialSchema.findOne as Mock).mockResolvedValue(null);
@@ -49,7 +49,7 @@ describe("Issuance Service", () => {
     });
 
     describe("given the username already exists", () => {
-      it("should return the existing credential with 200 status code", async () => {
+      it("should return the existing credential with 409 status code", async () => {
         const savedCredential = {
           _id: "123",
           username: "test-user",
@@ -66,7 +66,7 @@ describe("Issuance Service", () => {
             username: "test-user",
           });
 
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(409);
         expect(response.body.error).toBe(false);
         expect(response.body.message).toContain("already exists");
         expect(response.body.data.credential.id).toBe(savedCredential._id);
@@ -104,6 +104,84 @@ describe("Issuance Service", () => {
         const response = await request(app)
           .post("/api/services/issuance/issue")
           .send({ username: "test-user" });
+
+        expect(response.status).toBe(500);
+        expect(response.body.error).toBe(true);
+        expect(response.body.message).toContain("Please try again.");
+      });
+    });
+  });
+
+  describe("POST /services/issuance/internal/check", () => {
+    describe("given that one or both of username and password are missing", () => {
+      it("should return an error with status code 400", async () => {
+        const response = await request(app)
+          .post("/api/services/issuance/internal/check")
+          .send();
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe(true);
+        expect(response.body.message).toContain(
+          "Please enter a username and password"
+        );
+      });
+    });
+
+    describe("given a correct username and password", () => {
+      it("should return the credential details with status code 200", async () => {
+        const savedCredential = {
+          _id: "123",
+          username: "test-user",
+          password: "test-password-123",
+          worker: "worker-test",
+          createdAt: new Date().toISOString(),
+        };
+
+        (CredentialSchema.findOne as Mock).mockResolvedValue(savedCredential);
+
+        const response = await request(app)
+          .post("/api/services/issuance/internal/check")
+          .send({
+            username: "test-user",
+            password: "test-password-123",
+          });
+
+        expect(response.status).toBe(200);
+        expect(response.body.error).toBe(false);
+        expect(response.body.message).toContain("verified");
+        expect(response.body.data.credential.username).toBe("test-user");
+        expect(response.body.data.credential.password).toBe(
+          "test-password-123"
+        );
+      });
+    });
+
+    describe("given a incorrect username and password", () => {
+      it("should return an error with 404 status code", async () => {
+        (CredentialSchema.findOne as Mock).mockResolvedValue(null);
+
+        const response = await request(app)
+          .post("/api/services/issuance/internal/check")
+          .send({
+            username: "test-user",
+            password: "test-password-123",
+          });
+
+        expect(response.status).toBe(404);
+        expect(response.body.error).toBe(true);
+        expect(response.body.message).toContain("not found");
+      });
+    });
+
+    describe("given the database fails", () => {
+      it("should return an error with 500 status code", async () => {
+        (CredentialSchema.findOne as Mock).mockRejectedValue(
+          new Error("Mock Database connection failed")
+        );
+
+        const response = await request(app)
+          .post("/api/services/issuance/internal/check")
+          .send({ username: "test-user", password: "test-password-123" });
 
         expect(response.status).toBe(500);
         expect(response.body.error).toBe(true);
