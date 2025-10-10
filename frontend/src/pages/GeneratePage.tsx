@@ -119,6 +119,10 @@ const GeneratePage = () => {
           {modalData.status === "success" && modalData.credential && (
             <div className="bg-neutral-800 p-4 rounded-md space-y-2 text-sm">
               <div className="flex justify-between">
+                <span className="font-semibold text-neutral-400">Id:</span>
+                <span className="text-white">{modalData.credential.id}</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="font-semibold text-neutral-400">
                   Username:
                 </span>
