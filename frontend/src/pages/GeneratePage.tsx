@@ -34,13 +34,24 @@ const GeneratePage = () => {
     } catch (err) {
       let errorText = "An unexpected error occurred. Please try again.";
       if (err instanceof AxiosError && err.response) {
-        errorText = err.response.data?.message || "Error response from server.";
-      }
+        if (err.response.status === 409 && err.response.data.error === false) {
+          const response = err.response.data;
 
-      setModalData({
-        status: "error",
-        message: errorText,
-      });
+          setModalData({
+            status: "success",
+            message: response.message,
+            credential: response.data.credential,
+          });
+        } else {
+          errorText =
+            err.response.data?.message || "Error response from server.";
+        }
+      } else {
+        setModalData({
+          status: "error",
+          message: errorText,
+        });
+      }
     } finally {
       setIsLoading(false);
       setUsername("");

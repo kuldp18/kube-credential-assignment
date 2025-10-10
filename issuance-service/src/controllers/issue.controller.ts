@@ -28,7 +28,7 @@ export async function fetchCredentials(
     )) as Credential & Document;
 
     if (existingCredential) {
-      return res.status(200).json({
+      return res.status(409).json({
         message: `Credential with username '${username}' already exists`,
         error: false,
         data: {
