@@ -83,6 +83,18 @@ describe("Issuance Service", () => {
       });
     });
 
+    describe("given an empty or missing username", () => {
+      it("should return an error with 400 status code", async () => {
+        const response = await request(app)
+          .post("/api/services/issuance/issue")
+          .send();
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe(true);
+        expect(response.body.message).toContain("username");
+      });
+    });
+
     describe("given the database fails", () => {
       it("should return an error with 500 status code", async () => {
         (CredentialSchema.findOne as Mock).mockRejectedValue(
