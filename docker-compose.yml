@@ -1,0 +1,33 @@
+networks:
+  kube-net:
+    driver: bridge
+
+services:
+  issuance-service:
+    build: ./issuance-service
+    image: kuldp18/kube-credential-issuance:1.0
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      PORT: 5000
+    networks:
+      - kube-net
+
+  verification-service:
+    build: ./verification-service
+    image: kuldp18/kube-credential-verification:1.0
+    environment:
+      ISSUANCE_SERVICE_URL: "http://issuance-service:5000/api/services/issuance/internal/check"
+      PORT: 5001
+    networks:
+      - kube-net
+
+  frontend:
+    build: ./frontend
+    image: kuldp18/kube-credential-frontend:1.0
+    ports:
+      - "8080:80"
+    depends_on:
+      - issuance-service
+      - verification-service
+    networks:
+      - kube-net
