@@ -5,26 +5,17 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { BrowserRouter } from "react-router";
 import apiClient from "../../api/client";
+import { copyToClipboard } from "../../utils/copyToClipboard";
 
 // Mock API
 vi.mock("../../api/client");
 
-describe("GeneratePage", () => {
-  // Mock clipboard API
-  const mockWriteText = vi.fn().mockResolvedValue(undefined);
+// Mock clipboard utility
+vi.mock("../../utils/copyToClipboard");
 
+describe("GeneratePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockWriteText.mockClear();
-
-    // Reset clipboard mock before each test
-    Object.defineProperty(navigator, "clipboard", {
-      value: {
-        writeText: mockWriteText,
-      },
-      writable: true,
-      configurable: true,
-    });
   });
 
   it("should render the initial form correctly on the page with a disabled button", () => {
@@ -123,6 +114,10 @@ describe("GeneratePage", () => {
   });
   it("should copy the password to clipboard on click and display 'Copied!' text for 2 seconds", async () => {
     const user = userEvent.setup();
+
+    // Mock the copyToClipboard utility
+    vi.mocked(copyToClipboard).mockResolvedValue(undefined);
+
     render(<GeneratePage />, { wrapper: BrowserRouter });
 
     const mockCredential = {
@@ -148,6 +143,9 @@ describe("GeneratePage", () => {
     const passwordSpan = await screen.findByText("test-password-123");
 
     await user.click(passwordSpan);
+
+    // Verify copyToClipboard was called with the correct password
+    expect(copyToClipboard).toHaveBeenCalledWith("test-password-123");
 
     expect(await screen.findByText("Copied!")).toBeInTheDocument();
 

@@ -6,6 +6,7 @@ import apiClient from "../api/client";
 import { AxiosError } from "axios";
 import { Link } from "react-router";
 import { FiExternalLink as ExternalLinkIcon } from "react-icons/fi";
+import { copyToClipboard } from "../utils/copyToClipboard";
 
 type ModalData = {
   status: "success" | "error";
@@ -60,7 +61,7 @@ const GeneratePage = () => {
   };
 
   const handleCopyPassword = (password: string) => {
-    navigator.clipboard.writeText(password).then(() => {
+    copyToClipboard(password).then(() => {
       setIsCopied(true);
       setTimeout(() => {
         setIsCopied(false);
