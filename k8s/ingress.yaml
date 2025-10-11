@@ -16,8 +16,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: kube-credential.local
-      http:
+    - http:
         paths:
           # Frontend routes - serve static files
           - path: /()(.*)
