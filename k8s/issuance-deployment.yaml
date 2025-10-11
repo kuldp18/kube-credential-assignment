@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: issuance-service
+  namespace: kube-credential
+  labels:
+    app: issuance-service
+    tier: backend
+spec:
+  serviceName: issuance-service
+  replicas: 2
+  selector:
+    matchLabels:
+      app: issuance-service
+  template:
+    metadata:
+      labels:
+        app: issuance-service
+        tier: backend
+    spec:
+      containers:
+        - name: issuance-service
+          image: kuldp18/kube-credential-issuance:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "5000"
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-uri
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: WORKER_NAME
+              value: "$(POD_NAME)"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+  podManagementPolicy: Parallel

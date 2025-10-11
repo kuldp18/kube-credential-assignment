@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verification-service
+  namespace: kube-credential
+  labels:
+    app: verification-service
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: verification-service
+  template:
+    metadata:
+      labels:
+        app: verification-service
+        tier: backend
+    spec:
+      containers:
+        - name: verification-service
+          image: kuldp18/kube-credential-verification:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
+              name: http
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "5001"
+            - name: ISSUANCE_SERVICE_URL
+              value: "http://issuance-service:5000/api/services/issuance/internal/check"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"

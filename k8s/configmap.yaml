@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: kube-credential
+  labels:
+    app: kube-credential-system
+data:
+  # Application configuration
+  issuance.port: "5000"
+  verification.port: "5001"
+  frontend.port: "80"
+
+  # Service URLs
+  issuance.service.url: "http://issuance-service:5000"
+  verification.service.url: "http://verification-service:5001"
