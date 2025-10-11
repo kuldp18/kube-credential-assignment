@@ -8,7 +8,7 @@ metadata:
     tier: backend
 spec:
   serviceName: issuance-service
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: issuance-service
