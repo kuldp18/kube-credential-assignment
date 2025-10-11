@@ -4,12 +4,12 @@ metadata:
   name: issuance-service
   namespace: kube-credential
   labels:
-    app: issuance-service
+    app: worker
     tier: backend
 spec:
   type: ClusterIP
   selector:
-    app: issuance-service
+    app: worker
   ports:
     - name: http
       port: 5000

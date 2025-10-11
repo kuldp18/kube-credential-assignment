@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: issuance-service
+  name: worker
   namespace: kube-credential
   labels:
-    app: issuance-service
+    app: worker
     tier: backend
 spec:
-  serviceName: issuance-service
+  serviceName: worker
   replicas: 3
   selector:
     matchLabels:
-      app: issuance-service
+      app: worker
   template:
     metadata:
       labels:
-        app: issuance-service
+        app: worker
         tier: backend
     spec:
       containers:
-        - name: issuance-service
+        - name: worker
           image: kuldp18/kube-credential-issuance:1.0
           imagePullPolicy: IfNotPresent
           ports:
@@ -33,7 +33,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mongodb-secret
-                  key: mongo-uri
+                  key: MONGO_URI
             - name: POD_NAME
               valueFrom:
                 fieldRef:
