@@ -1,52 +1,69 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: frontend-ingress
-  namespace: kube-credential
-spec:
-  ingressClassName: nginx
-  defaultBackend:
-    service:
-      name: frontend
-      port:
-        number: 80
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
   name: issuance-ingress
   namespace: kube-credential
+  labels:
+    app: kube-credential-system
   annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /api/services/issuance/issue
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
-  - http:
-      paths:
-      - path: /issue
-        pathType: Prefix
-        backend:
-          service:
-            name: worker
-            port:
-              number: 5000
-              
+    - http:
+        paths:
+          - path: /issue
+            pathType: Exact
+            backend:
+              service:
+                name: issuance-service
+                port:
+                  number: 5000
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: verification-ingress
   namespace: kube-credential
+  labels:
+    app: kube-credential-system
   annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /api/services/verification/verify
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
-  - http:
-      paths:
-      - path: /verify
-        pathType: Prefix
-        backend:
-          service:
-            name: verification-service
-            port:
-              number: 5001
+    - http:
+        paths:
+          - path: /verify
+            pathType: Exact
+            backend:
+              service:
+                name: verification-service
+                port:
+                  number: 5001
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  namespace: kube-credential
+  labels:
+    app: kube-credential-system
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
